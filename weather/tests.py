@@ -17,11 +17,21 @@ class StaticURLTests(TestCase):
         self.assertTemplateUsed(response, 'weather/index.html')
 
     def test_detail_page_exists(self):
-        response = self.client.get(reverse("weather:detail", kwargs={"city": "berlin"}))
+        response = self.client.get(
+            reverse(
+                "weather:detail",
+                kwargs={"city": "berlin"}
+            )
+        )
         self.assertEqual(response.status_code, 200)
 
     def test_detail_page_use_correct_template(self):
-        response = self.client.get(reverse("weather:detail", kwargs={"city": "berlin"}))
+        response = self.client.get(
+            reverse(
+                "weather:detail",
+                kwargs={"city": "berlin"}
+            )
+        )
         self.assertTemplateUsed(response, 'weather/forecast.html')
 
     def test_main_page_correct_context(self):
@@ -35,7 +45,12 @@ class StaticURLTests(TestCase):
                 self.assertIsInstance(form_field, expected)
 
     def test_detail_page_correct_context(self):
-        response = self.client.get(reverse("weather:detail", kwargs={"city": "berlin"}))
+        response = self.client.get(
+            reverse(
+                "weather:detail",
+                kwargs={"city": "berlin"}
+            )
+        )
         form = response.context["form"]
         title = response.context["title"]
         self.assertIsInstance(form, SearchForm)

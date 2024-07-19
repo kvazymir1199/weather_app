@@ -1,4 +1,3 @@
-from django.template.response import TemplateResponse
 from django.utils.deprecation import MiddlewareMixin
 from django.urls import reverse
 
@@ -16,7 +15,10 @@ class LastVisitedMiddleware(MiddlewareMixin):
         page_title = response.context_data.get('title', 'No Title')
         if current_path != reverse("weather:index"):
             if response.context_data.get("forecast"):
-                last_visited_pages.append({'path': current_path, 'title': page_title})
+                last_visited_pages.append(
+                    {'path': current_path,
+                     'title': page_title}
+                )
 
         request.session['last_visited_page'] = last_visited_pages
 

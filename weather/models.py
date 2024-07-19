@@ -13,7 +13,11 @@ class WeatherData(models.Model):
     wind_speed = models.DecimalField(max_digits=10, decimal_places=2)
 
     created_at = models.DateTimeField(auto_now=True)
-    city = models.ForeignKey("CityData", on_delete=models.CASCADE,related_name="weather")
+    city = models.ForeignKey(
+        "CityData",
+        on_delete=models.CASCADE,
+        related_name="weather"
+    )
 
     def __str__(self):
         return (f"temperature: {self.temperature}"

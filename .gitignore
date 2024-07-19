@@ -3,7 +3,8 @@ venv/
 .cache.sqlite
 .idea/
 .vscode/
-
+.media
+.static
 
 
 db.sqlite3

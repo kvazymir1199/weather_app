@@ -1,9 +1,8 @@
 from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
-from django.views.generic import TemplateView, DeleteView
+from django.views.generic import TemplateView
 from django.views.generic.edit import FormMixin
-from django.core.exceptions import ObjectDoesNotExist
 from .forms import SearchForm
 from .utils import get_weather_forecast
 import urllib.parse
@@ -48,11 +47,16 @@ class WeatherForecastView(TemplateView, FormMixin):
             "form": self.get_form(),
             "title": query,
         }
-        return TemplateResponse(request, "weather/forecast.html", context=context)
-
+        return TemplateResponse(
+            request,
+            "weather/forecast.html",
+            context=context
+        )
 
     def post(self, request, *args, **kwargs):
-        return send_search_request(self, request, *args, **kwargs)
+        return send_search_request(
+            self, request, *args, **kwargs
+        )
 
 
 def send_search_request(obj, request, *args, **kwargs):
@@ -61,5 +65,10 @@ def send_search_request(obj, request, *args, **kwargs):
     if form.is_valid():
         query = form.cleaned_data['search_field']
         encoded_string = urllib.parse.quote(query)
-        return redirect(reverse("weather:detail", kwargs={"city": encoded_string}))
+        return redirect(
+            reverse(
+                "weather:detail",
+                kwargs={"city": encoded_string}
+            )
+        )
     return TemplateResponse(request, reverse("weather:index"), context=context)

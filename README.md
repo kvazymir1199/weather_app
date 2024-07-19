@@ -79,6 +79,9 @@ docker-compose up -d
 ```
 Для начала работы с бд выполните миграции
 ```sh
+docker-compose run backend python manage.py makemigrations
+```
+```sh
 docker-compose run backend python manage.py migrate
 ```
 Для подключения CSS стилей выполните команду 
@@ -95,67 +98,35 @@ docker-compose run backend python manage.py collectstatic
 
 # Примеры запросов
 
-**GET**: http://127.0.0.1:8000/api/users/
+**GET**: http://localhost/api/v1/
 Пример ответа:
 
 ```json
 [
-  {
-    "id": 1,
-    "name": "Denis"
-  },
-  {
-    "id": 2,
-    "name": "Anton"
-  },
-  {
-    "id": 3,
-    "name": "Vladimir"
-  },
-  {
-    "id": 4,
-    "name": "Kiril"
-  }
+    {
+        "name": "Berlin",
+        "slug": "berlin",
+        "requests": 6
+    },
+    {
+        "name": "Moskva",
+        "slug": "москва",
+        "requests": 3
+    }
 ]
 ```
 
-**GET**: http://127.0.0.1:8000/api/users/1/
-Пример ответа:
-
-```json
-[
-  {
-    "id": 1,
-    "name": "Denis"
-  }
-]
-```
-
-**GET**: http://127.0.0.1:8000/api/users/1/digest
+**GET**: http://localhost/api/users/berlin/
 Пример ответа:
 
 ```json
 {
-  "posts": [
-    "Сенсация: биткоин достиг исторического минимума",
-    "В ожидании выхода God of War 3",
-    "Рецепт Домашние блинчики с начинкой",
-    "Курс рубля показывает 'небывалый успех'"
-  ]
+    "name": "Berlin",
+    "slug": "berlin",
+    "requests": 6
 }
 ```
 
-Для фильтрации по рейтингу используйте query_params в запросе
-**GET**: http://127.0.0.1:8000/api/users/1/digest?rating=9
-Пример ответа:
-
-```json
-{
-  "posts": [
-    "Сенсация: биткоин достиг исторического минимума"
-  ]
-}
-```
 
 ## Автор:
 
