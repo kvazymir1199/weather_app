@@ -1,6 +1,24 @@
 version: '3'
 
 services:
+  db:
+    image: postgres:15.0-alpine
+    volumes:
+      - db_data:/var/lib/postgresql/data/
+    env_file:
+      - .env
+
+  backend:
+    build: .
+    volumes:
+      - .:/app
+      - static_value:/app/static/
+      - media_value:/app/media/
+
+    expose:
+      - "8000"
+    depends_on:
+      - db
   nginx:
     image: nginx:latest
     ports:
@@ -12,18 +30,11 @@ services:
     depends_on:
       - backend
 
-  backend:
-    build: .
-    volumes:
-      - .:/app
-      - static_value:/app/static/
-      - media_value:/app/media/
 
-    expose:
-      - "8000"
 
 
 volumes:
   static_value:
   media_value:
   app:
+  db_data:

@@ -22,11 +22,12 @@
                         Сохраненные
                     </a>
                     <ul class="dropdown-menu">
-                        {% for visit in request.session.last_visited_pages %}
+                        {% for visit in request.session.last_visited_pages reversed %}
+                            {% if forloop.counter0 < 9 and not forloop.last %}
+                                <li><a class="dropdown-item" href="{{ visit.path }}">{{ visit.title }}</a></li>
 
-                            <li><a class="dropdown-item" href="{{ visit.path }}">{{ visit.title }}</a></li>
-                            {% if not forloop.last %}
-                        <hr class="dropdown-divider">
+                                <hr class="dropdown-divider">
+                                
                             {% endif %}
                         {% endfor %}
 

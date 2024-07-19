@@ -9,6 +9,9 @@ from rest_framework.exceptions import NotFound
 from .serializers import CitySerializer
 from .models import WeatherData
 from retry_requests import retry
+from .models import CityData
+from django.core.exceptions import ObjectDoesNotExist
+from django.utils.text import slugify
 
 cache_session = requests_cache.CachedSession('.cache', expire_after=3600)
 retry_session = retry(cache_session, retries=5, backoff_factor=0.2)
@@ -43,27 +46,25 @@ class ForecastRequest:
 
 
 def get_city_by_name(name):
-    res = get_city_list(name)
-    print(res)
-    return res
+    try:
+        city = CityData.objects.get(slug=name)
+        return city
+    except CityData.DoesNotExist:
+        url = 'https://geocoding-api.open-meteo.com/v1/search'
+        response = requests.get(url, params={'name': name}).json()
+        result = response.get("results")
 
+        if not result:
+            raise ObjectDoesNotExist
+        result[0]["slug"] = name
+        serializer = CitySerializer(data=result[0])
 
-def get_cities_by_name(name):
-    return get_city_list(name, many=True)
-
-
-def get_city_list(name, many=False):
-    url = 'https://geocoding-api.open-meteo.com/v1/search'
-    response = requests.get(url, params=CityRequest(name=name).__dict__).json()
-    result = response.get("results")
-    if not result:
-        raise NotFound("City not founded")
-
-    serializer = CitySerializer(data=result if many else result[0], many=many)
-
-    if serializer.is_valid():
-        return serializer.data
-    raise Http404
+        if serializer.is_valid():
+            serializer.save()
+            return CityData.objects.get(slug=name)
+        else:
+            print("Serializer not valid", serializer.errors)
+            raise Http404
 
 
 def get_weather_forecast(city) -> WeatherData | None:
@@ -71,20 +72,25 @@ def get_weather_forecast(city) -> WeatherData | None:
         data = get_city_by_name(city)
         url = "https://api.open-meteo.com/v1/forecast"
         if not data:
-            return None
-        params = ForecastRequest(**data)
+            raise ObjectDoesNotExist
+        params = ForecastRequest(latitude=data.latitude,
+                                 longitude=data.longitude,
+                                 timezone=data.timezone)
         response = openmeteo.weather_api(url, params=params.__dict__)[0]
         current = response.Current()
-        return WeatherData(
+        weather_data = WeatherData(
             temperature=current.Variables(0).Value(),
             humidity=current.Variables(1).Value(),
             apparent_temperature=current.Variables(2).Value(),
             precipitation=current.Variables(3).Value(),
             is_day=current.Variables(4).Value(),
-            wind_speed=current.Variables(5).Value()
+            wind_speed=current.Variables(5).Value(),
+            city=data
         )
-    except NotFound:
-        HttpResponseNotFound("hello")
+        weather_data.save()
+        return weather_data
+    except ObjectDoesNotExist:
+        return None
 
 
 def timing_decorator(func):

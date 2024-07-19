@@ -3,23 +3,14 @@ venv/
 .cache.sqlite
 .idea/
 .vscode/
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
 
-*.zip
-*.tar.gz
-*.rar
+
+
 db.sqlite3
 
-.coverage
-*.cover
-*.coverage
 
-*.egg
-*.egg-info/
-dist/
-build/
-*.pyd
+
+
+
 __pycache__/
+.env
