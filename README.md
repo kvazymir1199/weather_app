@@ -50,7 +50,7 @@
 Клонируйте репозиторий и перейдите в него в командной строке:
 
 ```sh
-git clone https://github.com/kvazymir1199/weather_app.git && cd weather_app_main
+git clone https://github.com/kvazymir1199/weather_app.git && cd weather_app
 ```
 
 Создайте .env файл командой:
@@ -72,22 +72,22 @@ DB_PORT=<5432>
 SECRET_KEY=<секретный ключ проекта django>
 ```
 
-Выполните команду
+Выполните команду docker compose или docker-compose 
 
 ```sh
-docker-compose up -d
+docker compose up -d
 ```
 Для начала работы с бд выполните миграции
 ```sh
-docker-compose run backend python manage.py makemigrations
+docker compose run backend python manage.py makemigrations
 ```
 ```sh
-docker-compose run backend python manage.py migrate
+docker compose run backend python manage.py migrate
 ```
 Для подключения CSS стилей выполните команду 
 
 ```sh
-docker-compose run backend python manage.py collectstatic
+docker compose run backend python manage.py collectstatic
 ```
 
 
